@@ -12,7 +12,8 @@ const modal = document.getElementById('pet-select-modal');
 const petChoices = document.querySelectorAll('.pet-choice');
 const timerEl = document.getElementById('timer');
 const mainEl = document.querySelector('main');
-
+const gameOverModal = document.getElementById('game-over');
+const deadPetImgEl = document.getElementById('dead-pet');
 /*---------------------------- Variables (state) ----------------------------*/
 let state = {
     boredom: 0,
@@ -44,13 +45,18 @@ function init() {
     timerEl.textContent = `Timer: 0s`;
     gameLoop.play();
     gameLoop.loop = true;
-    const timer = setInterval(() => {
-        if (state.gameOver) {
-            clearInterval(timer)
-            return
-        }
-        runTime()
-    }, timeOut)
+
+    // Start the recursive game loop
+    gameLoopFunction();
+}
+
+function gameLoopFunction() {
+    if (state.gameOver) return;
+
+    runTime();
+
+    // Call gameLoopFunction again with the updated timeout
+    setTimeout(gameLoopFunction, timeOut);
 }
 
 function handleClickPlay() {
@@ -61,11 +67,6 @@ function handleClickPlay() {
         boredomStatEl.textContent = state.boredom;
         hungerStatEl.textContent = state.hunger;
         sleepinessStatEl.textContent = state.sleepiness;
-        gameMessageEl.textContent = 'You played with your pet!';
-        if (state.boredom >= 10 || state.hunger >= 10 || state.sleepiness >= 10) {
-            gameMessageEl.textContent = 'Your pet has died!';
-            state.gameOver = true;
-        }
     }
 }
 
@@ -77,11 +78,6 @@ function handleClickFeed() {
         boredomStatEl.textContent = state.boredom;
         hungerStatEl.textContent = state.hunger;
         sleepinessStatEl.textContent = state.sleepiness;
-        gameMessageEl.textContent = 'You fed your pet!';
-        if (state.boredom >= 10 || state.hunger >= 10 || state.sleepiness >= 10) {
-            gameMessageEl.textContent = 'Your pet has died!';
-            state.gameOver = true;
-        }
     }
 }
 
@@ -93,11 +89,6 @@ function handleClickSleep() {
         boredomStatEl.textContent = state.boredom;
         hungerStatEl.textContent = state.hunger;
         sleepinessStatEl.textContent = state.sleepiness;
-        gameMessageEl.textContent = 'You put your pet to bed!';
-        if (state.boredom >= 10 || state.hunger >= 10 || state.sleepiness >= 10) {
-            gameMessageEl.textContent = 'Your pet has died!';
-            state.gameOver = true;
-        }
     }
 }
 
@@ -111,6 +102,7 @@ function handleClickReset() {
     boredomStatEl.textContent = state.boredom;
     hungerStatEl.textContent = state.hunger;
     sleepinessStatEl.textContent = state.sleepiness;
+    gameOverModal.classList.add('hidden');
     // give gamemessage and reset button the class hidden
     gameMessageEl.classList.add('hidden');
     resetBtnEl.classList.add('hidden');
@@ -141,9 +133,8 @@ function runTime() {
     // increase the speed of gameloop as a percentage of the timer
     gameLoop.playbackRate = 1.0 + (state.timer / 100);
 
-    if (timeOut > 100) {
-        timeOut -= 1000 * (state.timer / 100);
-    }
+    timeOut = Math.max(300, parseInt(timeOut * (1.0 - (state.timer / 500)))); // Prevent timeOut from dropping below 500ms
+    console.log('TimeOut: ' + timeOut);
 
     // Check game over condition
     if (isGameOver()) {
@@ -170,10 +161,9 @@ function isGameOver() {
 function handleGameOver() {
     gameLoop.pause();
     state.gameOver = true;
-    
     // Get current highscore from localStorage
     const currentHighscore = localStorage.getItem('highscore') || 0;
-    
+
     // Update highscore if current timer is higher
     if (state.timer > currentHighscore) {
         localStorage.setItem('highscore', state.timer);
@@ -183,8 +173,10 @@ function handleGameOver() {
         gameMessageEl.textContent = `Game Over! Your pet survived for ${state.timer} seconds. Highscore: ${currentHighscore}s`;
         gameOverSound.play();
     }
-    
-    petImgEl.src = `./assets/${selectedPet}-dead.png`;
+
+    deadPetImgEl.src = `./assets/${selectedPet}-dead.png`;
+    mainEl.classList.add('hidden');
+    gameOverModal.classList.remove('hidden');
     resetBtnEl.classList.remove('hidden');
     gameMessageEl.classList.remove('hidden');
 }
