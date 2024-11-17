@@ -1,52 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tamagotchi</title>
-    <link rel="stylesheet" href="./css/style.css" />
-    <script src="./js/app.js" defer></script>
-  </head>
 
-  <body>
-    <header>
-      <h1>Tamagotchi</h1>
-    </header>
-    <main>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tamagotchi</title>
+  <link rel="stylesheet" href="./css/style.css" />
+  <script src="./js/app.js" defer></script>
+</head>
 
-      <!-- game interface / UI section -->
-      <section class="button-wrapper">
-        <button id="play">play</button>
-        <button id="feed">feed</button>
-        <button id="sleep">sleep</button>
-      </section>
+<body>
+  <header>
+    <h1>Fares's Tamagotchi</h1>
+    <h2 id="timer"></h2>
+  </header>
+  <main class="hidden">
+    <!-- game interface / UI section -->
+    <section class="button-wrapper">
+      <button id="play">Play</button>
+      <button id="feed">Feed</button>
+      <button id="sleep">Sleep</button>
+    </section>
 
-      <!-- game data section -->
-      <section class="stats-wrapper">
-        <p>Boredom: 
-          <span id="boredom-stat">...</span>
-        </p>
-        <p>Hunger: 
-          <span id="hunger-stat">...</span>
-        </p>
-        <p>Sleepiness:
-          <span id="sleepiness-stat">...</span>
-        </p>
-      </section>
+    <!-- game data section -->
+    <section class="stats-wrapper">
+      <p>Boredom:
+        <span id="boredom-stat">...</span>
+      </p>
+      <p>Hunger:
+        <span id="hunger-stat">...</span>
+      </p>
+      <p>Sleepiness:
+        <span id="sleepiness-stat">...</span>
+      </p>
+    </section>
 
-      <!-- game display / messaging section -->
-      <section class="game-state-wrapper">
-        <img 
-          class="game-graphic" 
-          alt="a tomato monster" 
-          src="./assets/alien-happy.png" 
-        />
-        <h1 id="message" class="hidden">
-            Oh no! You Lose!
-          </h1>
-        <button id="restart" class="hidden">Play Again</button>
-      </section>
-      
-    </main>
-  </body>
+    <!-- game display / messaging section -->
+    <section class="game-state-wrapper">
+      <img class="game-graphic" alt="a tomato monster" src="./assets/rabbit-happy.png" />
+      <h2 id="message" class="hidden"></h2>
+      <button id="restart" class="hidden">Play Again</button>
+    </section>
+  </main>
+
+  <!-- Add this right after the header section -->
+  <div id="pet-select-modal" class="modal">
+    <div class="modal-content">
+      <h2>Choose Your Pet</h2>
+      <div class="pet-options">
+        <div class="pet-choice" data-pet="rabbit">
+          <img src="./assets/rabbit-happy.png" alt="Rabbit">
+        </div>
+        <div class="pet-choice" data-pet="puppy">
+          <img src="./assets/puppy-happy.png" alt="Puppy">
+        </div>
+        <div class="pet-choice" data-pet="alien">
+          <img src="./assets/alien-happy.png" alt="Alien">
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
