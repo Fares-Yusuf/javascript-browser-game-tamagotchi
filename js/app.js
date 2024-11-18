@@ -31,6 +31,7 @@ let playSound = new Audio("assets/play.mp3");
 let gameOverSound = new Audio("assets/gameover.mp3");
 let highscoreSound = new Audio("assets/highscore.mp3");
 let timeOut = 1000;
+let startTime;
 
 /*------------------------ Cached Element References ------------------------*/
 boredomStatEl.textContent = state.boredom;
@@ -40,6 +41,8 @@ sleepinessStatEl.textContent = state.sleepiness;
 /*-------------------------------- Functions --------------------------------*/
 
 function init() {
+    startTime = Math.round(Date.now() / 1000) -1;
+
     modal.classList.add('hidden');
     mainEl.classList.remove('hidden');
     timerEl.textContent = `Timer: 0s`;
@@ -51,7 +54,10 @@ function init() {
 }
 
 function gameLoopFunction() {
-    if (state.gameOver) return;
+    if (state.gameOver) {
+        return;
+    }
+
 
     runTime();
 
@@ -127,14 +133,15 @@ function runTime() {
     else state.sleepiness++;
 
     // Update timer and display stats
-    state.timer++;
+    state.timer = Math.floor(Date.now() / 1000) - startTime;
     updateDisplayStats();
 
     // increase the speed of gameloop as a percentage of the timer
     gameLoop.playbackRate = 1.0 + (state.timer / 100);
 
-    timeOut = Math.max(300, parseInt(timeOut * (1.0 - (state.timer / 500)))); // Prevent timeOut from dropping below 500ms
-    console.log('TimeOut: ' + timeOut);
+    // Adjust difficulty without affecting timer
+    timeOut = Math.max(200, Math.round(1000 * (1.0 - (state.timer / 100))));
+    console.log(`TimeOut: ${timeOut}`);
 
     // Check game over condition
     if (isGameOver()) {
@@ -146,6 +153,7 @@ function runTime() {
     updatePetAppearance();
     updateButtonStates();
 }
+
 
 function updateDisplayStats() {
     timerEl.textContent = `Timer: ${state.timer}s`;
@@ -209,9 +217,9 @@ petChoices.forEach(choice => {
         // Add selected class to clicked choice
         choice.classList.add('selected');
         selectedPet = choice.dataset.pet;
-
         // Update the main game pet image
         petImgEl.src = `./assets/${selectedPet}-happy.png`;
+
         init();
     })
 });
